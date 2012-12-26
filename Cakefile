@@ -1,9 +1,17 @@
 {exec}  = require 'child_process'
 util    = require 'util'
 
+files = [
+  "ar/game.coffee",
+  "ar/window.coffee",
+  "demo.coffee",
+  "index.coffee",
+]
+
+dirname = (path) -> path.split('/')[0..-2].join('/')
+
 anyError = false
 errorText = ""
-
 # Generates a callback function for child_process.exec. If a function is passed
 # as a parameter, it will be called when the child process finishes.
 execCallback = (next) ->
@@ -25,10 +33,10 @@ task 'all', 'full build', (options) ->
 
 task 'build:node', '', (options) ->
   util.log "Building astro-riot.js"
-  run "mkdir -p gen"
-  run "coffee -o gen src/*.coffee"
   run "mkdir -p gen/ar"
-  run "coffee -o gen/ar src/ar/*.coffee"
+  for f in files
+    util.log "Compiling #{f}"
+    run "coffee -o gen/#{dirname f} -c src/#{f}"
 
 task 'build:dom', 'rebuild a browser-friendly hcf.js file', (options) ->
   util.log "Building game.js"
